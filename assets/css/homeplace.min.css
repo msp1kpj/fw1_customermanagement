@@ -1,0 +1,3 @@
+@font-face {font-family: Zrnic;src: url("/assets/fonts/zrnic___.ttf");}
+.fontZrnic{font-family: Zrnic;}
+body {height: 100%;	margin: 0;font-family: verdana;padding-bottom: 40px;}

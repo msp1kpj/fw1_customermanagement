@@ -1,0 +1,16 @@
+body {padding-top: 0px}
+table {width:100%;}
+a:link:after,a:visited:after{content:"";font-size:100%}
+.breadcrumb {display: none;}
+.span12 {min-height: 0px;}
+.noprint, .tbl {display:none;}
+.page-header {margin-top: 0px;}
+
+
+
+#tblCallList, #tblCallList table {border-width: 0px;margin-bottom: 0px;}
+#tblCallList table td, #tblCallList table th, #tblCallList th {border-width: 0px;}
+#tblCallList td {border-left-width: 0px; padding:0px; font-size: medium;}
+
+
+#tblCallList table table td {font-size: small;}

@@ -1,0 +1,29 @@
+tr.subheader1 {background-color: #CCCCCC;}
+
+td.subheader1 {text-align: left; color: #003399; font-family: verdana, arial; font-size: medium; font-weight: bold; border-top: 0px; border-left: 0px; border-right: 0px; border-bottom: 3px; border-color: #000000; border-style: solid;}
+
+
+
+tr.subheader2 {}
+
+td.subheader2 {background-color: #D3CBB4; text-align: left; color: #003399; font-family: verdana, arial; font-size: x-small; font-weight: bold; border-top: 0px; border-left: 0px; border-right: 0px; border-bottom: 2px; border-color: #000000; border-style: solid;}
+
+
+
+tr.content1 {}
+
+td.content1 {color: #000000; font-family: verdana, arial; font-size: small; font-weight: bold;}
+
+font.phone {color: #FF0033;}
+
+
+
+tr.content2 {}
+
+td.content2 {color: #000000; font-family: verdana, arial; font-size: xx-small; font-weight: normal;}
+
+
+
+td.seperator {border-top: 0px; border-left: 0px; border-right: 0px; border-bottom: 1px; border-color: #000000; border-style: solid;}
+
+h5.recordcount {float:right;}

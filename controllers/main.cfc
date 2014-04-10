@@ -19,11 +19,13 @@ component accessors="true" displayname="Main" extends="controllers.base.Controll
 		var i = 0;
 		param name='arguments.rc.sEcho' default='' type='string';
 		// Clear Search cookies
+		/*
 		for (cname in session) {
 			if (cname != "cfid" && cname != "cftoken" && lcase(cname) contains "search"){
 				session[cname] = "";
 			}
 		}
+		*/
 
 		local.query = variables.AccountService.getAccountList( arguments.rc );
 

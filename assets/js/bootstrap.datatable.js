@@ -30,6 +30,15 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings )
 	};
 };
 
+$.fn.dataTableExt.oApi.fnResetAllFilters = function (oSettings, bDraw) {
+        for(iCol = 0; iCol < oSettings.aoPreSearchCols.length; iCol++) {
+                oSettings.aoPreSearchCols[ iCol ].sSearch = '';
+        }
+        oSettings.oPreviousSearch.sSearch = '';
+
+        if(typeof bDraw === 'undefined') bDraw = true;
+        if(bDraw) this.fnDraw();
+}
 
 /* Bootstrap style pagination control */
 $.extend( $.fn.dataTableExt.oPagination, {

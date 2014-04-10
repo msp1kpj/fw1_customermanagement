@@ -21,13 +21,13 @@
 			<table cellpadding="0" cellspacing="0" border="0" width="100%" class="table table-striped table-bordered" id="tblCustomerList">
 				<thead>
 					<tr>
-						<th colspan="2"><button title="Click to view or hide search columns." class="btn view pull-right" data-customerid="0"><i class="icon-eye-close"></i></button></th>
-						<th><input type="text" name="search_lastName" value="" class="span12" placeholder="Search Last Name" /></th>
-						<th><input type="text" name="search_firstName" value="" class="span12" placeholder="Search First Name"/></th>
-						<th><input type="text" name="search_address" value="" class="span12" placeholder="Search Street Address"/></th>
-						<th><input type="text" name="search_city" value="" class="span12" placeholder="Search City"/></th>
-						<th><input type="text" name="search_postalCode" value="" class="span12" placeholder="Search Postal Code"/></th>
-						<th><input type="text" name="search_telephone" value="" class="span12"  placeholder="Search Telephone"/></th>
+						<th colspan="2"><div class="btn-group pull-right"><button title="Click to view or hide search columns." class="btn clear" data-customerid="0"  data-index="1"><i class="icon-remove-sign"></i></button><button title="Click to view or hide search columns." class="btn view" data-customerid="0"  data-index="1"><i class="icon-eye-close"></i></button></div></th>
+						<th><input type="text" name="search_lastName" value="" class="span12" placeholder="Search Last Name" data-search="c1.lastName" data-index="2"/></th>
+						<th><input type="text" name="search_firstName" value="" class="span12" placeholder="Search First Name" data-search="c1.firstName"  data-index="3"/></th>
+						<th><input type="text" name="search_address" value="" class="span12" placeholder="Search Street Address" data-search="c1.address" data-index="4"/></th>
+						<th><input type="text" name="search_city" value="" class="span12" placeholder="Search City" data-search="c1.city" data-index="5"/></th>
+						<th><input type="text" name="search_postalCode" value="" class="span12" placeholder="Search Postal Code" data-search="c1.postalCode"  data-index="6"/></th>
+						<th><input type="text" name="search_telephone" value="" class="span12"  placeholder="Search Telephone" data-search="c1.phone" data-index="7"/></th>
 					</tr>
 					<tr>
 						<th><button title="Click to add service information." class="btn add pull-right" data-customerid="0"><i class="icon-plus"></i></button></th>
@@ -228,13 +228,13 @@
 
 		function phoneRender( data, type, full ) {
 			if ( type === 'display' ) {
-				var val = String(data).replace(/\D/g,'');
+				var val = String(data).replace(/[^0-9]/g,'');
 				if(val.length === 7) {
 					return val.replace(/(\d{3})(\d{4})/, '$1-$2');
 				} else if(val.length === 10){
-					return String(data).replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+					return String(val).replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
 				} else if(val.length > 10){
-					return String(data).replace(/(\d{3})(\d{3})(\d{4})(\d+)/, '($1) $2-$3 x$4');
+					return String(val).replace(/(\d{3})(\d{3})(\d{4})(\d+)/, '($1) $2-$3 x$4');
 				}
 			}
 			return data;
@@ -299,11 +299,22 @@
 				, "oColVis": {
 							"aiExclude": [ 0 ]
 						}
+				, "fnDrawCallback" : function( oSettings ) {
+    				$("thead input").keyup( function () {
+    					filterColumn(this);
+    				} );
+	    		}
 			});
 
-			$("thead input").keyup( function () {
-				filterColumn(this);
-			} );
+		  	$("#tblCustomerList input[name='search_lastName']").val($oTable['tblCustomerList'].fnSettings().aoPreSearchCols[2].sSearch);
+		  	$("#tblCustomerList input[name='search_firstName']").val($oTable['tblCustomerList'].fnSettings().aoPreSearchCols[3].sSearch);
+		  	$("#tblCustomerList input[name='search_address']").val($oTable['tblCustomerList'].fnSettings().aoPreSearchCols[4].sSearch);
+		  	$("#tblCustomerList input[name='search_city']").val($oTable['tblCustomerList'].fnSettings().aoPreSearchCols[5].sSearch);
+		  	$("#tblCustomerList input[name='search_postalCode']").val($oTable['tblCustomerList'].fnSettings().aoPreSearchCols[6].sSearch);
+		  	$("#tblCustomerList input[name='search_telephone']").val($oTable['tblCustomerList'].fnSettings().aoPreSearchCols[7].sSearch);
+
+
+
 
 			$('#modal-remove-account')
 				.on('show', function() {
@@ -446,7 +457,13 @@
 								chkBox.find("input").first().attr('checked', 'true');
 							}
 							chkBox.find("input").on('change', function(){
-								var self = $(this);
+								var self = $(this)
+									, objInput = $('*[data-search="' + self.attr('id') + '"]')
+								;
+
+								if(objInput.size()){
+									objInput.first().val('');
+								}
 								fnShowHide(self.val());
 							});
 							list.append(chkBox);
@@ -474,7 +491,7 @@
 					val = String(val).replace(/[^\d%]/g,''); // remove non-numerics
 				}
 
-				oTable.fnFilter( val, self.parent().index() + 1 );
+				oTable.fnFilter( val, self.data("index") );
 			}
 
 			function removeAccount(){
@@ -529,6 +546,16 @@
 				.delegate(".delete", "click", removeAccount)
 				.delegate(".view", "click", viewColumnOption)
 				.delegate(".view-detail", "click", viewAccountDetail)
+				.delegate('.clear', 'click', function(event) {
+					$oTable['tblCustomerList'].fnResetAllFilters();
+					$("#tblCustomerList input[name='search_lastName']").val($oTable['tblCustomerList'].fnSettings().aoPreSearchCols[2].sSearch);
+					$("#tblCustomerList input[name='search_firstName']").val($oTable['tblCustomerList'].fnSettings().aoPreSearchCols[3].sSearch);
+					$("#tblCustomerList input[name='search_address']").val($oTable['tblCustomerList'].fnSettings().aoPreSearchCols[4].sSearch);
+					$("#tblCustomerList input[name='search_city']").val($oTable['tblCustomerList'].fnSettings().aoPreSearchCols[5].sSearch);
+					$("#tblCustomerList input[name='search_postalCode']").val($oTable['tblCustomerList'].fnSettings().aoPreSearchCols[6].sSearch);
+					$("#tblCustomerList input[name='search_telephone']").val($oTable['tblCustomerList'].fnSettings().aoPreSearchCols[7].sSearch);
+					$("#tblCustomerList_filter input").val($oTable['tblCustomerList'].fnSettings().oPreviousSearch.sSearch);
+				})
 			;
 
 
@@ -551,7 +578,15 @@
 
 				var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
 				oTable.fnSetColumnVis(iCol, bVis ? false : true);
-				oTable.fnAdjustColumnSizing();
+				oTable.fnSettings().aoColumns[iCol].bSearchable = oTable.fnSettings().aoColumns[iCol].bVisible;
+				oTable.fnFilter( "", iCol );
+				oTable.fnSettings().aoColumns[iCol].sSearch = "";
+				//oTable.fnAdjustColumnSizing();
+				oTable.fnDraw();
+				$("thead input").keyup( function () {
+					filterColumn(this);
+				} );
+
 			}
 
 		});

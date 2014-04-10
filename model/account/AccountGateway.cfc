@@ -35,7 +35,9 @@ component output="false" displayname="Account Gateway" extends="model.base.Gatew
 				local.searchCol LTE (arguments.data.iColumns - 1);
 				local.searchCol = local.searchCol + 1
 			){
-				if(structKeyExists(arguments.data, "sSearch_" & local.searchCol ) and len(trim(arguments.data["sSearch_" & local.searchCol])) AND (
+				if(structKeyExists(arguments.data, "sSearch_" & local.searchCol ) and len(trim(arguments.data["sSearch_" & local.searchCol]))
+						AND structKeyExists(arguments.data, "bSearchable_" & local.searchCol ) AND IsValid("boolean", arguments.data["bSearchable_" & local.searchCol])
+						AND lcase(arguments.data["bSearchable_" & local.searchCol]) eq "true" AND (
 						(structKeyExists(arguments.data, "mDataProp_" & local.searchCol) and len(arguments.data['mDataProp_' & local.searchCol]) gt 0)
 						or (Len(trim(listGetAt(local["columnList"], local.searchCol+1))) gt 0))
 					){

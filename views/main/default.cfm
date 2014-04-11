@@ -558,6 +558,8 @@
 				})
 			;
 
+			$("#tblCustomerList_filter input").tooltip({'html': true,'trigger':'focus', 'title': 'Use the "%" as a wildcard search. eg.("John%", "%Doe").<br/><ul><li>like "TOT%" is true for any string that begins with "TOT".</li><li>like "%ZERO%" is true for any string that contains "ZERO".</li><li>like "%FRESH" is true for any string that ends with "FRESH"</li></ul>'});
+
 
 			validator = frmAccountEdit.validate({ onkeyup: false });
 

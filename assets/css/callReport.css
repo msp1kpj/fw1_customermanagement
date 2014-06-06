@@ -9,7 +9,7 @@ a:link:after,a:visited:after{content:"";font-size:100%}
 
 
 #tblCallList, #tblCallList table {border-width: 0px;margin-bottom: 0px;}
-#tblCallList table td, #tblCallList table th, #tblCallList th {border-width: 0px;}
+#tblCallList table td, #tblCallList table th, #tblCallList th {border-width: 0px;padding: 0px;line-height: 20px;}
 #tblCallList td {border-left-width: 0px; padding:0px; font-size: medium;}
 
 

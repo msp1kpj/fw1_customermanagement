@@ -88,9 +88,9 @@
 					<cfif structKeyExists(rc, "nophone") and structKeyExists(rc.nophone, "query1")  and structKeyExists(rc.nophone, "query2") and isQuery(rc.nophone.query1) and isQuery(rc.nophone.query2) and rc.nophone.query1.recordcount gt 0>
 						<cfloop query="rc.nophone.query1" endrow="5">
 							<tr>
-								<td><a href="#buildURL(  action = "account.edit", queryString = "customerId=" & rc.nophone.query1.customerId )#">#rc.nophone.query1.lastName#</a></td>
+								<td><a href="#buildURL(  action = "account.edit", queryString = "customerId=" & rc.nophone.query1.customerId & "&chk=" & hash(rc.nophone.query1.customerId) )#">#rc.nophone.query1.lastName#</a></td>
 								<td width="135px">#DateFormat(rc.nophone.query1.dateOfService, "yyyy-mmmm")#</td>
-								<td width="45px"><a class="btn pull-right" href="#buildURL(  action = "account.edit", queryString = "customerId=" & rc.nophone.query1.customerId )#"><i class="icon-edit"></i></a></td>
+								<td width="45px"><a class="btn pull-right" href="#buildURL(  action = "account.edit", queryString = "customerId=" & rc.nophone.query1.customerId & "&chk=" & hash(rc.nophone.query1.customerId) )#"><i class="icon-edit"></i></a></td>
 							</tr>
 						</cfloop>
 					<cfelse>
@@ -128,9 +128,9 @@
 					<cfif structKeyExists(rc, "noservice") and structKeyExists(rc.noservice, "query1") and isQuery(rc.noservice.query1) and rc.noservice.query1.recordcount gt 0>
 						<cfloop query="rc.noservice.query1" endrow="5">
 							<tr>
-								<td><a href="#buildURL(  action = "account.edit", queryString = "customerId=" & rc.noservice.query1.customerId )#">#rc.noservice.query1.lastName#</a></td>
+								<td><a href="#buildURL(  action = "account.edit", queryString = "customerId=" & rc.noservice.query1.customerId & "&chk=" & hash(rc.noservice.query1.customerId) )#">#rc.noservice.query1.lastName#</a></td>
 								<td width="135px">#DateFormat(rc.noservice.query1.dateOfService, "yyyy-mmmm")#</td>
-								<td width="45px"><a class="btn pull-right" href="#buildURL(  action = "account.edit", queryString = "customerId=" & rc.noservice.query1.customerId )#"><i class="icon-edit"></i></a></td>
+								<td width="45px"><a class="btn pull-right" href="#buildURL(  action = "account.edit", queryString = "customerId=" & rc.noservice.query1.customerId & "&chk=" & hash(rc.noservice.query1.customerId) )#"><i class="icon-edit"></i></a></td>
 							</tr>
 						</cfloop>
 					<cfelse>
@@ -151,6 +151,24 @@
 	<script type="text/javascript" src="/assets/js/jquery.flot.resize.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
 
+	<cfset ServiceCallYearList = valueList(rc.chart.callData.ServiceCallYear) />
+	<cfset ServiceCallYearMin = listFirst(ServiceCallYearList) />
+	<cfset ServiceCallYearMax = listLast(ServiceCallYearList) />
+	<cfset ServiceCallData = StructNew() />
+
+	<!--- create year month struct to hold data --->
+	<cfloop from="#ServiceCallYearMin#" to="#ServiceCallYearMax#" index="ServiceCallYear">
+		<cfset ServiceCallData[ServiceCallYear] = StructNew() />
+		<cfset CallMonth = 0 />
+		<cfloop from="1" to="12" index="CallMonth">
+			<cfset ServiceCallData[ServiceCallYear][CallMonth] = 0 />
+		</cfloop>
+	</cfloop>
+
+	<!--- Populate year month struct with actual data --->
+	<cfloop query="rc.chart.callData">
+		<cfset ServiceCallData[rc.chart.callData.ServiceCallYear][Month(rc.chart.callData.ServiceCallMonth)] = rc.chart.callData.calls />
+	</cfloop>
 
 	<script type="text/javascript">
 
@@ -159,16 +177,18 @@
 		var data = [
 			//{ data: oilPrices, label: "Oil price ($)" },
 			//{ data: exchangeRates, label: "USD/EUR exchange rate", yaxis: 2 }
-			<cfoutput query="rc.chart.callData" group="ServiceCallYear">
+			<cfloop from="#ServiceCallYearMin#" to="#ServiceCallYearMax#" index="ServiceCallYear">
+			<cfoutput>
 				{
-					label:"#rc.chart.callData.ServiceCallYear# Calls"
+					label:"#ServiceCallYear# Calls"
 					, data:[
-					<cfoutput>
-						[#int(DateDiff("s",DateConvert("utc2Local", "January 1 1970 00:00"), (Month(rc.chart.callData.ServiceCallMonth)&"/01/"&Year(now())) )*1000)#, #rc.chart.callData.calls#],
-					</cfoutput>
+					<cfloop from="1" to="12" index="CallMonth">
+						[#int(DateDiff("s",DateConvert("utc2Local", "January 1 1970 00:00"), (CallMonth&"/02/"&Year(now())) )*1000)#, #ServiceCallData[ServiceCallYear][CallMonth]#],
+					</cfloop>
 					]
 				},
-			</cfoutput>
+				</cfoutput>
+			</cfloop>
 		];
 
 		var options = {

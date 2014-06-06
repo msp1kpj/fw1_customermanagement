@@ -5,18 +5,32 @@
 		<cfparam name="attributes.calllog" type="query"/>
 	</cfcase>
 	<cfcase value="End">
+		<cfquery name="customer" dbtype="query">
+			SELECT customerId, lastname, firstname, address, city, phone
+			FROM attributes.calllog
+ 			GROUP BY customerId, lastname, firstname, address, city, phone
+			ORDER BY lastname, firstname, city
+		</cfquery>
 		<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="tblCallList">
 			<tbody>
-				<cfoutput query="attributes.calllog" group="customerId">
+				<cfloop query="customer">
+				<cfquery name="service" dbtype="query">
+					SELECT dateOfService, ServiceDescription, amount, technician, ServiceNote
+					FROM attributes.calllog
+					WHERE customerId = #customer.customerId#
+					ORDER BY dateOfService DESC
+				</cfquery>
 				<tr>
 					<td>
 						<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
+							<cfoutput>
 							<tr>
-								<th width="200px" rowspan="2"><a href="/?action=account.edit&customerId=#attributes.calllog.customerId#">#attributes.calllog.lastname#, #attributes.calllog.firstname#</a></th>
-								<th width="40%">#attributes.calllog.address#</th>
-								<th width="40%">#attributes.calllog.city#</th>
-								<th width="150px" nowrap="true">#phoneFormat(attributes.calllog.phone)#</th>
+								<th width="200px" rowspan="2"><a href="/?action=account.edit&customerId=#customer.customerId#">#customer.lastname#, #customer.firstname#</a></th>
+								<th >#customer.address#</th>
+								<th >#customer.city#</th>
+								<th nowrap="true" style="text-align:right;">#phoneFormat(customer.phone)#</th>
 							</tr>
+							</cfoutput>
 							<tr>
 								<td colspan="3">
 									<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
@@ -27,13 +41,13 @@
 											<th>Tech</th>
 											<th>Notes</th>
 										</tr>
-										<cfoutput>
+										<cfoutput query="service" maxrows="5">
 										<tr>
-											<td width="75px">#DateFormat(attributes.calllog.dateOfService, "mm/dd/yyyy")#</td>
-											<td width="30%">#attributes.calllog.ServiceDescription#</td>
-											<td width="75px">#NumberFormat(attributes.calllog.amount,"$,.00")#</td>
-											<td width="150px">#attributes.calllog.technician#</td>
-											<td>#attributes.calllog.ServiceNote#</td>
+											<td width="75px">#DateFormat(service.dateOfService, "mm/dd/yyyy")#</td>
+											<td width="30%">#service.ServiceDescription#</td>
+											<td width="75px">#NumberFormat(service.amount,"$,.00")#</td>
+											<td width="150px">#service.technician#</td>
+											<td>#service.ServiceNote#</td>
 										</tr>
 										</cfoutput>
 									</table>
@@ -42,7 +56,7 @@
 						</table>
 					</td>
 				</tr>
-				</cfoutput>
+				</cfloop>
 			</tbody>
 		</table>
 

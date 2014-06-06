@@ -16,12 +16,15 @@ component accessors="true" output="false" displayname="Account" extends="control
 		arguments.rc.callSummary = variables.ReportService.getCallReportSummary();
 		arguments.rc.nophone = variables.ReportService.getNoPhone();
 		arguments.rc.noservice = variables.ReportService.getNoService();
-
 	}
 
 
 	public void function calllog(required struct rc) {
 		if(isDate(arguments.rc.month)){
+			if(DatePart("d", arguments.rc.month) neq 1){
+				arguments.rc.month = dateAdd("d", 1, dateAdd("d", (DatePart("d", arguments.rc.month)*-1), arguments.rc.month));
+			}
+
 			arguments.rc.calllog = variables.ReportService.getCallReport(month = arguments.rc.month);
 			arguments.rc.formatUtil = variables.FormatUtility;
 		} else {
